@@ -20,7 +20,10 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:push": "prisma db push"
+    "prisma:push": "prisma db push",
+    "data:generate": "node dist/cli/generate-csv.js",
+    "data:load": "node -e \"fetch('http://localhost:3000/data/load', { method: 'POST' }).then(r => r.text()).then(console.log)\"",
+    "data:populate": "npm run data:generate && npm run data:load"
   },
   "dependencies": {
     "@faker-js/faker": "^10.4.0",
