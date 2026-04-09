@@ -11,3 +11,59 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model Auth {
+  id       String   @id @default(uuid())
+  email    String   @unique
+  password String
+  learner  Learner?
+}
+
+model Learner {
+  id          String       @id @default(uuid())
+  fullName    String
+  authId      String       @unique
+  auth        Auth         @relation(fields: [authId], references: [id])
+  enrollments Enrollment[]
+}
+
+model Specialization {
+  id          String                     @id @default(uuid())
+  title       String
+  description String
+  courses     Course[]
+  enrollments SpecializationEnrollment[]
+}
+
+model Course {
+  id               String         @id @default(uuid())
+  title            String
+  specializationId String
+  specialization   Specialization @relation(fields: [specializationId], references: [id])
+}
+
+model Subscription {
+  id          String                     @id @default(uuid())
+  title       String
+  type        String
+  price       Float
+  enrollments SpecializationEnrollment[]
+}
+
+model SpecializationEnrollment {
+  id               String         @id @default(uuid())
+  enrolledAt       DateTime       @default(now())
+  specializationId String
+  subscriptionId   String
+  specialization   Specialization @relation(fields: [specializationId], references: [id])
+  subscription     Subscription   @relation(fields: [subscriptionId], references: [id])
+  enrollments      Enrollment[]
+}
+
+model Enrollment {
+  id                         String                   @id @default(uuid())
+  learnerId                  String
+  specializationEnrollmentId String
+  learner                    Learner                  @relation(fields: [learnerId], references: [id])
+  specializationEnrollment   SpecializationEnrollment @relation(fields: [specializationEnrollmentId], references: [id])
+}
