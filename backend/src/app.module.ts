@@ -1,24 +1,21 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 
-import { PresentationController } from './presentation/presentation.controller';
-import { BusinessLogicService } from './business-logic/business-logic.service';
-import { DataAccessService } from './data-access/data-access.service';
+// New Features imports
+import { CourseController } from './presentation/course.controller';
+import { SpecializationController } from './presentation/specialization.controller';
+import { CourseBusinessLogicService } from './business-logic/course-business-logic.service';
+import { SpecializationBusinessLogicService } from './business-logic/specialization-business-logic.service';
+import { CourseDataAccessService } from './data-access/course-data-access.service';
+import { SpecializationDataAccessService } from './data-access/specialization-data-access.service';
 
 @Module({
   imports: [],
-  controllers: [AppController, PresentationController],
+  controllers: [CourseController, SpecializationController],
   providers: [
-    AppService,
-    {
-      provide: 'IDataAccess',
-      useClass: DataAccessService,
-    },
-    {
-      provide: 'IBusinessLogic',
-      useClass: BusinessLogicService,
-    },
+    CourseBusinessLogicService,
+    SpecializationBusinessLogicService,
+    CourseDataAccessService,
+    SpecializationDataAccessService,
   ],
 })
 export class AppModule {}
