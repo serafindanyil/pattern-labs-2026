@@ -32,6 +32,7 @@ model Specialization {
   title       String
   description String
   courses     Course[]
+  enrollments SpecializationEnrollment[]
 }
 
 model Course {
@@ -67,4 +68,3 @@ model Enrollment {
   learner                    Learner                  @relation(fields: [learnerId], references: [id])
   specializationEnrollment   SpecializationEnrollment @relation(fields: [specializationEnrollmentId], references: [id])
 }
-
