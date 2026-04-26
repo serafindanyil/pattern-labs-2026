@@ -1,33 +1,66 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient, Course } from '@prisma/client';
+import { Prisma } from '@prisma/client';
+import { PrismaService } from './prisma.service';
+
+const COURSE_WITH_SPECIALIZATION = {
+  specialization: {
+    select: {
+      id: true,
+      title: true,
+    },
+  },
+} satisfies Prisma.CourseInclude;
+
+export type CourseWithSpecialization = Prisma.CourseGetPayload<{
+  include: typeof COURSE_WITH_SPECIALIZATION;
+}>;
 
 @Injectable()
 export class CourseDataAccessService {
-  private prisma: PrismaClient;
+  constructor(private readonly prisma: PrismaService) {}
 
-  constructor() {
-    this.prisma = new PrismaClient();
+  async findAll(): Promise<CourseWithSpecialization[]> {
+    return this.prisma.course.findMany({
+      include: COURSE_WITH_SPECIALIZATION,
+      orderBy: { title: 'asc' },
+    });
   }
 
-  async findAll(): Promise<Course[]> {
-    return this.prisma.course.findMany();
+  async findById(id: string): Promise<CourseWithSpecialization | null> {
+    return this.prisma.course.findUnique({
+      where: { id },
+      include: COURSE_WITH_SPECIALIZATION,
+    });
   }
 
-  async findById(id: string): Promise<Course | null> {
-    return this.prisma.course.findUnique({ where: { id } });
-  }
-
-  async create(data: { title: string; description?: string }): Promise<Course> {
+  async create(data: {
+    title: string;
+    description: string;
+    specializationId?: string | null;
+  }): Promise<CourseWithSpecialization> {
     return this.prisma.course.create({
-      data: { title: data.title, description: data.description || '' },
+      data: {
+        title: data.title,
+        description: data.description,
+        specializationId: data.specializationId ?? null,
+      },
+      include: COURSE_WITH_SPECIALIZATION,
     });
   }
 
   async update(
     id: string,
-    data: { title?: string; description?: string },
-  ): Promise<Course> {
-    return this.prisma.course.update({ where: { id }, data });
+    data: {
+      title?: string;
+      description?: string;
+      specializationId?: string | null;
+    },
+  ): Promise<CourseWithSpecialization> {
+    return this.prisma.course.update({
+      where: { id },
+      data,
+      include: COURSE_WITH_SPECIALIZATION,
+    });
   }
 
   async delete(id: string): Promise<void> {

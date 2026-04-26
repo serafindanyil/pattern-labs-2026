@@ -10,7 +10,12 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { CourseBusinessLogicService } from '../business-logic/course-business-logic.service';
-import { CreateCourseDto, UpdateCourseDto } from '../domain/dtos/course.dto';
+import {
+  CourseWithSpecializationDto,
+  CreateCourseDto,
+  UpdateCourseDto,
+} from '../domain/dtos/course.dto';
+import { DeleteResultDto } from '../domain/dtos/specialization.dto';
 
 @ApiTags('Courses')
 @Controller('api/courses')
@@ -19,7 +24,7 @@ export class CourseController {
 
   @Get()
   @ApiOperation({ summary: 'Get all courses' })
-  @ApiResponse({ status: 200, description: 'List of courses' })
+  @ApiResponse({ status: 200, type: [CourseWithSpecializationDto] })
   async findAll() {
     return this.courseLogic.findAll();
   }
@@ -27,7 +32,7 @@ export class CourseController {
   @Get(':id')
   @ApiOperation({ summary: 'Get course by id' })
   @ApiParam({ name: 'id', description: 'Course ID' })
-  @ApiResponse({ status: 200, description: 'Course found' })
+  @ApiResponse({ status: 200, type: CourseWithSpecializationDto })
   @ApiResponse({ status: 404, description: 'Course not found' })
   async findById(@Param('id') id: string) {
     return this.courseLogic.findById(id);
@@ -36,7 +41,7 @@ export class CourseController {
   @Post()
   @HttpCode(201)
   @ApiOperation({ summary: 'Create new course' })
-  @ApiResponse({ status: 201, description: 'Course created' })
+  @ApiResponse({ status: 201, type: CourseWithSpecializationDto })
   async create(@Body() dto: CreateCourseDto) {
     return this.courseLogic.create(dto);
   }
@@ -44,7 +49,7 @@ export class CourseController {
   @Put(':id')
   @ApiOperation({ summary: 'Update course' })
   @ApiParam({ name: 'id', description: 'Course ID' })
-  @ApiResponse({ status: 200, description: 'Course updated' })
+  @ApiResponse({ status: 200, type: CourseWithSpecializationDto })
   @ApiResponse({ status: 404, description: 'Course not found' })
   async update(@Param('id') id: string, @Body() dto: UpdateCourseDto) {
     return this.courseLogic.update(id, dto);
@@ -53,7 +58,7 @@ export class CourseController {
   @Delete(':id')
   @ApiOperation({ summary: 'Delete course' })
   @ApiParam({ name: 'id', description: 'Course ID' })
-  @ApiResponse({ status: 200, description: 'Course deleted' })
+  @ApiResponse({ status: 200, type: DeleteResultDto })
   @ApiResponse({ status: 404, description: 'Course not found' })
   async remove(@Param('id') id: string) {
     return this.courseLogic.delete(id);

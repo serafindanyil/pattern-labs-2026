@@ -1,10 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CourseDataAccessService } from '../data-access/course-data-access.service';
 import { CreateCourseDto, UpdateCourseDto } from '../domain/dtos/course.dto';
+import { SpecializationDataAccessService } from '../data-access/specialization-data-access.service';
 
 @Injectable()
 export class CourseBusinessLogicService {
-  constructor(private readonly dataAccess: CourseDataAccessService) {}
+  constructor(
+    private readonly dataAccess: CourseDataAccessService,
+    private readonly specializationDataAccess: SpecializationDataAccessService,
+  ) {}
 
   async findAll() {
     return this.dataAccess.findAll();
@@ -19,17 +23,32 @@ export class CourseBusinessLogicService {
   }
 
   async create(dto: CreateCourseDto) {
+    await this.ensureSpecializationExists(dto.specializationId);
     return this.dataAccess.create(dto);
   }
 
   async update(id: string, dto: UpdateCourseDto) {
-    await this.findById(id); // Ensures it exists
+    await this.findById(id);
+    await this.ensureSpecializationExists(dto.specializationId);
     return this.dataAccess.update(id, dto);
   }
 
   async delete(id: string) {
-    await this.findById(id); // Ensures it exists
+    await this.findById(id);
     await this.dataAccess.delete(id);
-    return { success: true, message: 'Course deleted successfully' };
+    return { success: true };
+  }
+
+  private async ensureSpecializationExists(id?: string | null) {
+    if (!id) {
+      return;
+    }
+
+    const specialization =
+      await this.specializationDataAccess.findByIdWithCourses(id);
+
+    if (!specialization) {
+      throw new NotFoundException(`Specialization with id ${id} not found`);
+    }
   }
 }
