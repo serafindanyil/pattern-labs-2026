@@ -19,12 +19,15 @@ function generateCsv(filePath: string, numRows: number) {
   const specializations = [
     { title: 'DevOps Engineer', description: 'Deploy and scale robust apps' },
     { title: 'Data Scientist', description: 'Learn data analysis and ML' },
-    { title: 'Full Stack Web Dev', description: 'React and Nodejs masterclass' }
+    {
+      title: 'Full Stack Web Dev',
+      description: 'React and Nodejs masterclass',
+    },
   ];
 
   const subscriptions = [
     { title: 'Basic', type: 'Monthly', price: 9.99 },
-    { title: 'Premium', type: 'Lifetime', price: 299.99 }
+    { title: 'Premium', type: 'Lifetime', price: 299.99 },
   ];
 
   for (let i = 1; i <= numRows; i++) {
@@ -34,7 +37,7 @@ function generateCsv(filePath: string, numRows: number) {
 
     const spec = specializations[i % specializations.length];
     const sub = subscriptions[i % subscriptions.length];
-    
+
     const courseTitle = `Course Module ${i}`;
     const enrolledAt = new Date().toISOString();
 
@@ -50,7 +53,7 @@ function generateCsv(filePath: string, numRows: number) {
         sub.type,
         sub.price,
         enrolledAt,
-      ].join(',')
+      ].join(','),
     );
   }
 

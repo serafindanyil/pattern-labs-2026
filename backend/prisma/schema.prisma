@@ -28,7 +28,7 @@ model Learner {
 }
 
 model Specialization {
-  id          String                     @id @default(uuid())
+  id          String   @id @default(uuid())
   title       String
   description String
   courses     Course[]
@@ -36,10 +36,11 @@ model Specialization {
 }
 
 model Course {
-  id               String         @id @default(uuid())
+  id               String          @id @default(uuid())
   title            String
-  specializationId String
-  specialization   Specialization @relation(fields: [specializationId], references: [id])
+  description      String
+  specializationId String?
+  specialization   Specialization? @relation(fields: [specializationId], references: [id], onDelete: SetNull)
 }
 
 model Subscription {
