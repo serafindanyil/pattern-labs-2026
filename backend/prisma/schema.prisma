@@ -38,6 +38,7 @@ model Specialization {
 model Course {
   id               String         @id @default(uuid())
   title            String
+  description      String         @default("")
   specializationId String
   specialization   Specialization @relation(fields: [specializationId], references: [id])
 }
